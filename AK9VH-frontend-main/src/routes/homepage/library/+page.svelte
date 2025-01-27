@@ -3,6 +3,8 @@
   import { goto } from "$app/navigation";
   import { authStore } from "../../../stores/authStore";
   import { ROUTES } from "../../../config/constants";
+  import { core } from "@tauri-apps/api";
+
   import Navbar from "$lib/components/Navbar.svelte";
 
   let userGames = [];
@@ -42,13 +44,18 @@
       console.error("Error uninstalling game:", error);
     }
   }
-  const kokot = "test";
-  function startGame(gameUrl: string) {
-    const downloadsFolder = `${window.navigator.userAgent.includes("Windows") ? "C:\\Users\\" : "/Users/"}${kokot}/Downloads`;
-    const filePath = `${downloadsFolder}/${gameUrl}`;
-
-    // Otevření souboru
-    window.location.href = `file://${filePath}`;
+  async function launchExe() {
+    try {
+      // Zadejte cestu k souboru .exe na disku
+      // (např. "C:\\Users\\mv\\Desktop\\Game1.exe" na Windows)
+      await core.invoke("run_exe", {
+        exePath: "C:\\Users\\test\\Downloads\\Game1.exe",
+      });
+      console.log("Spouštím Game1.exe");
+    } catch (error) {
+      console.error("Nepodařilo se spustit exe:", error);
+      alert(`Chyba: ${error}`);
+    }
   }
   onMount(() => {
     // Initialize auth store
@@ -79,10 +86,7 @@
         >
           <p class="game-title">{game.game_title}</p>
           <div class="manage">
-            <button
-              on:click={() => startGame(game.game_url)}
-              class="button run"
-            >
+            <button on:click={() => launchExe()} class="button run">
               Start the game
             </button>
             <button
