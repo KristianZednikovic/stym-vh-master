@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS users
     username   VARCHAR(50) UNIQUE NOT NULL,
     email      VARCHAR(100)       NOT NULL,
     password   VARCHAR(255)       NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    token VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS blacklisted_tokens (

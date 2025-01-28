@@ -3,7 +3,6 @@ import { pool } from '../config/database';
 import path from 'path';
 import fs from 'fs';
 
-// Stávající funkce
 export const downloadGame = async (req: Request, res: Response): Promise<void> => {
     const userId = parseInt(req.params.userId, 10); // Získání userId z parametrů
     const gameId = parseInt(req.params.gameId, 10); // Získání gameId z parametrů
@@ -56,8 +55,21 @@ export const verifyGameKey = async (req: Request, res: Response): Promise<void> 
             [userId, gameId]
         );
 
+        const result_token = await pool.query(
+            `SELECT token 
+             FROM users 
+             WHERE id = $1`,
+            [userId]
+        );
+
         if (result.rowCount === 0) {
             res.status(404).json({ message: 'License not found. User does not own this game.' });
+            return;
+        }
+        
+        console.error('TOKEN\n\n\n\n\n\n:', result_token.rows[0].token);
+        if (result_token.rows[0].token === null) {
+            res.status(404).json({ message: 'User is not online.' });
             return;
         }
 
