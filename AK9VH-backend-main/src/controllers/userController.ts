@@ -85,6 +85,9 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
             [token, user.id]
         );
 
+        console.log("user ID:", user.id);
+        console.log("token: ", token);
+
         // respond with token
         res.status(200).json({
             message: 'Login successful',

@@ -10,7 +10,8 @@ export const ROUTES = {
     LIBRARY: '/homepage/library',
     SETTINGS: '/homepage/settings',
     GAME_ONE: '/games/game-one',
-    GAME_TWO: '/games/game-two'
+    GAME_TWO: '/games/game-two',
+    GAME: '/homepage/store/[gameId]'
 } as const;
 
 export const API_ENDPOINTS = {

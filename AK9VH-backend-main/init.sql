@@ -19,11 +19,21 @@ CREATE TABLE IF NOT EXISTS blacklisted_tokens (
 CREATE TABLE IF NOT EXISTS game_store (
                         id SERIAL PRIMARY KEY,
                         title VARCHAR(100) NOT NULL,
-                        url VARCHAR(100) NOT NULL
+                        url VARCHAR(100) NOT NULL,
+                        description TEXT
 );
 
-INSERT INTO game_store (id, title, url) VALUES
-(1, 'Game 1', 'Game1.exe');
+INSERT INTO game_store (title, url, description) VALUES
+                                                    ('Shadow Quest', 'Game1.exe', 'Embark on an epic RPG adventure in a world of magic and mystery.'),
+                                                    ('Galactic Warfare', 'Game1.exe', 'Command vast fleets in a strategic battle for the galaxy.'),
+                                                    ('Cyber Heist', 'Game1.exe', 'Plan and execute daring heists in a futuristic cyberpunk world.'),
+                                                    ('Mystic Arena', 'Game1.exe', 'Compete in a tournament of powerful mages, mastering elemental spells.'),
+                                                    ('Racing Legends', 'Game1.exe', 'Experience the thrill of high-speed racing in exotic locations.'),
+                                                    ('Pirate Bounty', 'Game1.exe', 'Set sail on a swashbuckling adventure to find lost treasures.'),
+                                                    ('Dungeon Delvers', 'Game1.exe', 'Explore dangerous dungeons, fight monsters, and discover ancient artifacts.'),
+                                                    ('Puzzle Masters', 'Game1.exe', 'Solve challenging puzzles and unravel mind-bending mysteries.'),
+                                                    ('Space Explorers', 'Game1.exe', 'Journey to distant planets, discover alien life, and uncover cosmic secrets.'),
+                                                    ('Zombie Uprising', 'Game1.exe', 'Survive a zombie apocalypse and fight for the future of humanity.');
 
 CREATE TABLE IF NOT EXISTS library (
                         game_id INT NOT NULL,

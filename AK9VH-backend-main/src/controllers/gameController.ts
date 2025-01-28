@@ -159,3 +159,37 @@ export const uninstallGame = async (req: Request, res: Response): Promise<void> 
         res.status(500).json({ message: 'Chyba serveru.' });
     }
 };
+
+
+export const getGameById = async (req: Request, res: Response): Promise<void> => {
+    const gameId = parseInt(req.params.gameId, 10);
+
+    if (isNaN(gameId)) {
+        res.status(400).json({ message: 'Invalid gameId.' });
+        return;
+    }
+
+    try {
+        const gameResult = await pool.query('SELECT * FROM game_store WHERE id = $1', [gameId]);
+        if (gameResult.rowCount === 0) {
+            res.status(404).json({ message: 'Game not found.' });
+            return;
+        }
+        const game = gameResult.rows[0];
+        res.status(200).json(game);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error.' });
+    }
+};
+
+
+export const getAllGames = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const result = await pool.query('SELECT id, title, url, description FROM game_store');
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error('Error fetching games:', error);
+        res.status(500).json({ message: 'Error fetching games.' });
+    }
+};

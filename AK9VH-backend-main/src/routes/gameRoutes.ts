@@ -1,5 +1,12 @@
 import express from 'express';
-import { downloadGame, getUserLibrary, isGameInLibrary, uninstallGame, verifyGameKey} from '../controllers/gameController';
+import {
+    downloadGame,
+    getAllGames, getGameById,
+    getUserLibrary,
+    isGameInLibrary,
+    uninstallGame,
+    verifyGameKey
+} from '../controllers/gameController';
 import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = express.Router();
@@ -42,7 +49,19 @@ router.delete('/uninstall/:userId/:gameId', authMiddleware, (req, res) => {
     });
 });
 
+router.get('/', authMiddleware, (req, res) => {
+    getAllGames(req, res).catch((err) => {
+        console.error(err);
+        res.status(500).json({ message: 'Unexpected error.' });
+    });
+});
 
+router.get('/:gameId', authMiddleware, (req, res) => {
+    getGameById(req, res).catch((err) => {
+        console.error(err);
+        res.status(500).json({ message: 'Unexpected error.' });
+    });
+});
 
 
 export default router;
