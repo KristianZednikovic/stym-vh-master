@@ -27,8 +27,8 @@ const createAuthStore = () => {
                 userData.joinDate = new Date().toLocaleDateString();
             }
 
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(userData));
+            sessionStorage.setItem('token', token);
+            sessionStorage.setItem('user', JSON.stringify(userData));
 
             set({
                 user: userData,
@@ -37,8 +37,9 @@ const createAuthStore = () => {
             });
         },
         logout: () => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('user');
+
             set({
                 user: null,
                 token: null,
@@ -46,8 +47,8 @@ const createAuthStore = () => {
             });
         },
         initialize: () => {
-            const token = localStorage.getItem('token');
-            const storedUser = localStorage.getItem('user');
+            const token = sessionStorage.getItem('token');
+            const storedUser = sessionStorage.getItem('user');
 
             if (token && storedUser) {
                 const user = JSON.parse(storedUser);

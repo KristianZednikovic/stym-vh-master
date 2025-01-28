@@ -5,7 +5,7 @@ const router = Router();
 
 router.post('/register', (req: Request, res: Response) => registerUser(req, res));
 router.post('/login', (req: Request, res: Response) => loginUser(req, res));
-router.post('/logout', checkBlacklistedToken, logoutUser);
+router.post('/logout', logoutUser);
 
 
 export default router;
