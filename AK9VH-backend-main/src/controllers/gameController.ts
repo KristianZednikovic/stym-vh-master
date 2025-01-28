@@ -88,9 +88,13 @@ export const getUserLibrary = async (req: Request, res: Response): Promise<void>
 
     try {
         const result = await pool.query(
-            `SELECT g.id AS game_id, g.title AS game_title, g.url AS game_url
+            `SELECT
+                 g.id AS id,
+                 g.title AS title,
+                 g.url AS url,
+                 '' AS description
              FROM library l
-             JOIN game_store g ON l.game_id = g.id
+                      JOIN game_store g ON l.game_id = g.id
              WHERE l.user_id = $1`,
             [userId]
         );
@@ -100,7 +104,6 @@ export const getUserLibrary = async (req: Request, res: Response): Promise<void>
         res.status(500).json({ message: 'Chyba při získávání knihovny.' });
     }
 };
-
 
 export const isGameInLibrary = async (req: Request, res: Response): Promise<void> => {
     const userId = parseInt(req.params.userId, 10);
