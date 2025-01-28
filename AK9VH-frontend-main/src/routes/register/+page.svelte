@@ -16,6 +16,11 @@
     let isRegisterSuccess = false;
     let registerSuccessMessage = "Registration successful! You can now login.";
 
+    function isValidEmail(email: string): boolean {
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        return emailRegex.test(email);
+    }
+
     async function handleRegister() {
         // Reset errors and success state
         usernameError = emailError = passwordError = "";
@@ -28,12 +33,13 @@
         }
         if (!email) {
             emailError = "Email is required";
+        } else if (!isValidEmail(email)) {
+            emailError = "Invalid email format";
         }
         if (!password) {
             passwordError = "Password is required";
         }
         if (usernameError || emailError || passwordError) return;
-
         // Attempt registration
         try {
             const response = await fetchApi(API_ENDPOINTS.REGISTER, {
