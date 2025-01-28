@@ -78,6 +78,13 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
             {expiresIn: '8h'}
         );
 
+
+
+        await pool.query(
+            "UPDATE users SET token = $1 WHERE id = $2",
+            [token, user.id]
+        );
+
         // respond with token
         res.status(200).json({
             message: 'Login successful',
@@ -109,6 +116,11 @@ export const logoutUser = async (req: Request, res: Response): Promise<void> => 
         await pool.query(
             `INSERT INTO blacklisted_tokens (token, expiry) 
              VALUES ($1, NOW() + INTERVAL '8 hours')`,
+            [token]
+        );
+
+        await pool.query(
+            "UPDATE users SET token = NULL WHERE token = $1",
             [token]
         );
 
