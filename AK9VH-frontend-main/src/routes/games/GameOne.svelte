@@ -33,7 +33,7 @@
       isDownloaded = data.exists;
     }
   });
-  
+
   async function downloadGame(userId: number) {
     try {
       const response = await fetch(
@@ -59,7 +59,16 @@
       link.download = "Game1.exe";
       link.click();
 
-      alert("Hra byla stažena a přidána do vaší knihovny!");
+      const check = await fetch(
+        `http://localhost:3000/api/games/library/check/${user.userId}/1`,
+        {
+          headers: {
+            Authorization: `Bearer ${$authStore.token}`,
+          },
+        }
+      );
+      const data = await check.json();
+      isDownloaded = data.exists;
     } catch (error) {
       console.error(error);
       alert("Chyba při stahování hry.");

@@ -39,6 +39,37 @@ export const downloadGame = async (req: Request, res: Response): Promise<void> =
     }
 };
 
+export const verifyGameKey = async (req: Request, res: Response): Promise<void> => {
+    const userId = parseInt(req.params.userId, 10);
+    const gameId = parseInt(req.params.gameId, 10);
+
+    if (isNaN(userId) || isNaN(gameId)) {
+        res.status(400).json({ message: 'Invalid userId or gameId.' });
+        return;
+    }
+
+    try {
+        const result = await pool.query(
+            `SELECT game_key 
+             FROM library 
+             WHERE user_id = $1 AND game_id = $2`,
+            [userId, gameId]
+        );
+
+        if (result.rowCount === 0) {
+            res.status(404).json({ message: 'License not found. User does not own this game.' });
+            return;
+        }
+
+        const gameKey = result.rows[0].game_key;
+
+        res.status(200).json({ message: 'License is valid.', gameKey });
+    } catch (error) {
+        console.error('Error verifying license:', error);
+        res.status(500).json({ message: 'Server error.' });
+    }
+};
+
 // Opravená funkce: Získání knihovny uživatele
 export const getUserLibrary = async (req: Request, res: Response): Promise<void> => {
     const userId = parseInt(req.params.userId, 10);

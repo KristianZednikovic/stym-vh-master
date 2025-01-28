@@ -37,6 +37,7 @@
       );
       if (response) {
         userGames = userGames.filter((game) => game.id !== gameId);
+        fetchUserGames(user.userId);
       } else {
         console.error("Failed to uninstall game.");
       }
@@ -44,19 +45,17 @@
       console.error("Error uninstalling game:", error);
     }
   }
-  async function launchExe() {
-    try {
-      // Zadejte cestu k souboru .exe na disku
-      // (např. "C:\\Users\\mv\\Desktop\\Game1.exe" na Windows)
-      await core.invoke("run_exe", {
-        exePath: "C:\\Users\\test\\Downloads\\Game1.exe",
-      });
-      console.log("Spouštím Game1.exe");
-    } catch (error) {
-      console.error("Nepodařilo se spustit exe:", error);
-      alert(`Chyba: ${error}`);
-    }
-  }
+  // async function launchExe() {
+  //   try {
+  //     await core.invoke("run_exe", {
+  //       exePath: "C:\\Users\\test\\Downloads\\Game1.exe",
+  //     });
+  //     console.log("Spouštím Game1.exe");
+  //   } catch (error) {
+  //     console.error("Nepodařilo se spustit exe:", error);
+  //     alert(`Chyba: ${error}`);
+  //   }
+  // }
   onMount(() => {
     // Initialize auth store
     authStore.initialize();
@@ -69,6 +68,30 @@
       fetchUserGames(user.userId);
     }
   });
+
+  async function launchExe(gameId: number) {
+    try {
+      // Ověř, zda má uživatel platný klíč
+      const response = await fetch(
+        `http://localhost:3000/api/games/library/verify/${user.userId}/${gameId}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Licence nebyla nalezena nebo je neplatná.");
+      }
+
+      const { gameKey } = await response.json();
+
+      // Pokud je licence platná, spusť hru
+      console.log(`Licence ověřena: ${gameKey}. Spouštím hru.`);
+      await core.invoke("run_exe", {
+        exePath: "C:\\Users\\test\\Downloads\\Game1.exe",
+      });
+    } catch (error) {
+      console.error("Nepodařilo se spustit exe:", error);
+      alert(`Chyba: ${error.message}`);
+    }
+  }
 </script>
 
 <main class="min-h-screen bg-gray-800 p-4">
@@ -86,7 +109,7 @@
         >
           <p class="game-title">{game.game_title}</p>
           <div class="manage">
-            <button on:click={() => launchExe()} class="button run">
+            <button on:click={() => launchExe(game.game_id)} class="button run">
               Start the game
             </button>
             <button

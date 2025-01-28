@@ -1,8 +1,15 @@
 import express from 'express';
-import { downloadGame, getUserLibrary, isGameInLibrary, uninstallGame} from '../controllers/gameController';
+import { downloadGame, getUserLibrary, isGameInLibrary, uninstallGame, verifyGameKey} from '../controllers/gameController';
 import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = express.Router();
+
+router.get('/library/verify/:userId/:gameId', authMiddleware, (req, res) => {
+    verifyGameKey(req, res).catch((err) => {
+        console.error(err);
+        res.status(500).json({ message: 'Neočekávaná chyba.' });
+    });
+});
 
 // Route pro stažení hry a přidání do knihovny
 router.post('/download/:userId/:gameId', authMiddleware, (req, res) => {
