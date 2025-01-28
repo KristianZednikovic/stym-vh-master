@@ -8,6 +8,7 @@
     import Navbar from "$lib/components/Navbar.svelte";
     import type {Game} from "$lib/types/game";
     import type {User} from "$lib/types/user";
+    import {invoke} from "@tauri-apps/api/core";
 
     let userGames: Game[] = [];
     $: user = $authStore.user as User;
@@ -70,14 +71,6 @@
                 `http://localhost:3000/api/games/library/verify/${user.userId}/${gameId}`
             );
 
-            console.log("response: ", response);
-
-            console.log(`launchExe response: ${JSON.stringify(response)}`);
-            console.log(`User: ${user.userId}`);
-            console.log(`User: ${user.email}`);
-            console.log(`User: ${user.username}`);
-
-
 
             if (!response.ok) {
                 throw new Error("Licence nebyla nalezena nebo je neplatná.");
@@ -85,9 +78,14 @@
 
             const {gameKey} = await response.json();
 
+            // const documentsDirPath = await invoke('get_documents_dir');
+            // await invoke('create_stym_dir', { documentsDir: documentsDirPath });
+
+            const downloadsDirPath = await invoke('get_downloads_dir')
+
             // Pokud je licence platná, spusť hru
             await core.invoke("run_exe", {
-                exePath: `C:\\Users\\test\\Downloads\\${gameTitle}.exe`,
+                exePath: `${downloadsDirPath}/${gameTitle}.exe`,
             });
         } catch (error) {
             console.error("Nepodařilo se spustit exe:", error);

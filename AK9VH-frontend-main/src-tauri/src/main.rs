@@ -4,7 +4,25 @@
     windows_subsystem = "windows"
 )]
 use std::process::Command;
+use std::fs;
+use std::path::PathBuf;
 use tauri::command;
+
+#[tauri::command]
+async fn get_downloads_dir() -> Result<String, String> {
+    match dirs::download_dir() {
+        Some(path) => Ok(path.to_string_lossy().into()),
+        None => Err("Could not get downloads directory".into()),
+    }
+}
+
+#[tauri::command]
+async fn get_documents_dir() -> Result<String, String> {
+    match dirs::document_dir() {
+        Some(path) => Ok(path.to_string_lossy().into()),
+        None => Err("Could not get documents directory".into()),
+    }
+}
 
 // Command, který spustí daný exe soubor
 #[command]
@@ -22,9 +40,28 @@ fn run_exe(exe_path: &str) -> Result<(), String> {
     }
 }
 
+#[tauri::command]
+async fn create_stym_dir(documents_dir: String) -> Result<(), String> {
+    let stym_path = PathBuf::from(documents_dir).join("Stym");
+
+    if !stym_path.exists() {
+        match fs::create_dir_all(&stym_path) {
+            Ok(_) => Ok(()),
+            Err(e) => Err(format!("Failed to create Stym directory: {}", e)),
+        }
+    } else {
+        Ok(())
+    }
+}
+
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![run_exe])
+        .invoke_handler(tauri::generate_handler![
+            run_exe,
+            get_downloads_dir,
+            get_documents_dir,
+            create_stym_dir
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
