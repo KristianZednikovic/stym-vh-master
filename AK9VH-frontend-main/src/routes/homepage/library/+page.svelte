@@ -86,10 +86,8 @@
             const {gameKey} = await response.json();
 
             // Pokud je licence platná, spusť hru
-            console.log(`Licence ověřena: ${gameKey}. Spouštím hru.`);
-            console.log(`C:\\Users\\test\\Downloads\\${gameTitle}.exe`)
             await core.invoke("run_exe", {
-                exePath: `C:\\Users\\zamec\\Downloads\\${gameTitle}.exe`,
+                exePath: `C:\\Users\\test\\Downloads\\${gameTitle}.exe`,
             });
         } catch (error) {
             console.error("Nepodařilo se spustit exe:", error);
@@ -108,8 +106,6 @@
 
         <ul class="mt-4">
             {#each userGames as game}
-                <li>game id: {game.id}</li>
-                <li>game titel: {game.title}</li>
                 <li
                         class="game-box text-white p-2 border border-gray-700 rounded mt-2 text-white"
                 >
